@@ -1,0 +1,67 @@
+PROLANG
+
+
+
+
+Operations
+    !bool           bool
+    bool || bool    bool
+    bool && bool    bool
+    num + num       num 
+    num - num       num 
+    num * num       num 
+    num / num       num
+    num % num       num
+    void == void    bool
+    void != void    bool
+    void > void     bool
+    void < void     bool
+    void >= void    bool
+    void <= void    bool
+    bool? void:void 
+    select          void
+
+primitive types:
+    void
+    bool
+    char
+    uint8
+    uint16
+    uint32
+    uint64
+    uint128
+    int8
+    int16
+    int32
+    int64
+    int128
+    f32
+    f64
+    f128
+    
+
+keywords:
+    const
+    fn 
+    let
+    new
+    free
+    if
+    else
+    elif
+    loop
+    continue
+    break
+    global
+    local
+    inline
+    static
+    type
+    import
+    select
+
+default functions:
+    Read(uint32)
+    Write(uint32)
+    Sleep(uint64)
+    Terminate(uint32)

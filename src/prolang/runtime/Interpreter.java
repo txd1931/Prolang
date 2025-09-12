@@ -1,27 +1,22 @@
 package prolang.runtime;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Stack;
 import java.util.Scanner;
 
 import prolang.runtime.internal.ProcessConfig;
 import prolang.runtime.internal.ProcessStatus;
+import prolang.runtime.internal.Command;
 import prolang.runtime.internal.ExecutionProtocol;
-import prolang.runtime.SourceDeserializer;
-import prolang.runtime.internal.VirtualHeap;
-import prolang.external.Command;
-import prolang.external.Statement;
-import prolang.external.data.DataType;
+import prolang.runtime.SourceLoader;
 
 public class Interpreter {
     private ProcessStatus processStatus = null;
 
     private Scanner scanner = new Scanner(System.in);
-
-    private final Statement[] statements;
-
-    private VirtualHeap virtualHeap = new VirtualHeap();
     
+    private HashMap<String, Byte> registers = new HashMap<>();
     private int statementCounter = 0;
     private int pointerToCurrentStatement = -1;
     private ExecutionProtocol executionProtocol = null;
@@ -41,9 +36,17 @@ public class Interpreter {
             ProcessConfig.valueOf(args[1]), 
             Long.parseLong(args[2]), 
             Integer.parseInt(args[3]));
-        statements = SourceDeserializer.statements();
-
+        initRegs(this);
         mainLoop();
+    }
+
+    private static void initRegs(Interpreter instance){
+        instance.registers.put("reg1", (byte)0);
+        instance.registers.put("reg2", (byte)0);
+        instance.registers.put("reg3", (byte)0);
+        instance.registers.put("pc",   (byte)0);
+        instance.registers.put("ir",   (byte)0);
+        instance.registers.put("sr",   (byte)0);
     }
 
     public String getStatus(){
@@ -58,29 +61,22 @@ public class Interpreter {
         return System.currentTimeMillis() - startTime; 
     }
     
-    private Statement getCurrentToken() {
-    	if(pointerToCurrentStatement < 0 || pointerToCurrentStatement >= statements.length) {
-    		return null;
-    	}
-    	return statements[pointerToCurrentStatement];
-    }
 
     private void mainLoop(){
         startTime = System.currentTimeMillis();
         
-        while(executionProtocol.timeLimit >= timeSinceInvoked() && executionProtocol.statementCounterLimit >= statementCounter && processStatus == ProcessStatus.RUNNING_INACTIVE){
+        while(executionProtocol.timeLimit >= timeSinceInvoked() && executionProtocol.commandCounterLimit >= statementCounter && processStatus == ProcessStatus.RUNNING_INACTIVE){
         	
         	currentTime = System.currentTimeMillis();
             deltaTime = currentTime - lastTime;
             lastTime = currentTime;
             
             processStatus = ProcessStatus.RUNNING_ACTIVE;
-            parseStatement(getCurrentToken());
+            if(processStatus == ProcessStatus.RUNNING_ACTIVE)
             processStatus = ProcessStatus.RUNNING_INACTIVE;
             
             statementCounter++;
         }
-        processStatus = ProcessStatus.TERMINATING;
         terminateProcess();
     }
 
@@ -88,99 +84,11 @@ public class Interpreter {
         System.out.println("Terminating interpreter");
     }
     
-    private void parseStatement(final Statement currentStatement) {
-        Command command = currentStatement.command;
-    	switch(command){
-            case FN -> {
-
-            }
-            case CALL -> {
-
-            }
-            case LET -> {
-
-            }
-            case SET -> {
-
-            }
-            case NEW -> {
-
-            }
-            case FREE -> {
-
-            }
-            case IF -> {
-
-            }
-            case ELSE -> {
-
-            }
-            case ELSEIF -> {
-
-            }
-            case LOOP -> {
-
-            }
-            case CONTINUE -> {
-
-            }
-            case BREAK -> {
-
-            }
-            case OUT -> {
-                outputMessageToConsole((String)currentStatement.params[0]);
-            }
-            case IN -> {
-                getInputFromConsole((int)currentStatement.params[0]);
-            }
-            case EXIT -> {
-                final int exitCode = (int)currentStatement.params[0];
-                codeExit(exitCode);
-            }
-            case SLEEP -> {
-                try {
-                    Thread.sleep((int)currentStatement.params[0]);
-                }
-                catch(InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                }
-            }
-            default -> {
-                System.err.println("Unidentified command.");
-            }
-    	}
-    }
-
-    private void allocateVarOnHeap(DataType type, String identifier, String ininitializer){
-        virtualHeap.allocate(
-            switch (type){
-                case TEXT -> ininitializer;
-                case NUM  -> Float.parseFloat(ininitializer);
-                case BOOL -> Integer.parseInt(ininitializer) != 0;
-                default   -> { throw new RuntimeException("Unspecified initializer type"); }
-            }
-        );
-    }
-
-    private void pushNewVarOnStack(DataType type, String identifier, String ininitializer){
-    	
-    }
-    
-    private void dealocateVarFromHeap(String identifier) {
+    private void parseStatement() {
     	
     }
 
-    private void outputMessageToConsole(String message){
-        System.out.println(message);
-    }
-
-    private void getInputFromConsole(int targetVariable){
-        //scanner.nextLine(); -> targetVariable
-    }
-
-
-    private void codeExit(final int exitCode){
-        this.exitCode = exitCode;
+    private void commandHalt(){
         processStatus = ProcessStatus.TERMINATING;
     }
 }

@@ -1,72 +1,20 @@
-- - - - - Data Types - - - - -
-Default size: 32 bits
-
-General default value: 0x00000000
-
-text:
-	String text representation
-	Constant values represented between double quotes.
-	Implemented as a structure of ASCII encoded characters.
-	
-num 
-	A numeric value. Optionally a decimal number, with negative value support.
-
-bool:
-	Overheadless wrapper of the default Boolean java object. 
-	Is defined as either:
-	false
-	or 
-	true
-
-- - - - - Commands - - - - -
-
-command		par0		par1		par2		DESCRIPTION
-----		----		----		----		~~~~
-field 		{label}	
-	
-var 		{label} 	[any]					Declare a variable of any type. 
-var 		{label} 	[any] 		[num]		Declare an array of any type.
-													
-set			{label} 	[any]					Sets variable to another value of the same type.
-		
-free		{label}								Destroys a variable / array, freeing its memory space.
-	
-jump 		{label}								jumps to field with the same label.
-jump 		{label} 	[bool]					jumps to field with the same label only if contition is evaluated to true.
-	
-out 		[any]								Outputs the passed value to the console.
-		
-in 												Wait for any input from the console.
-in 			{label}								Wait for some input from the console and passes its value to its designed variable.
-		
-exit 		[num]								Terminates the execution returning a number. 
-		
-sleep 		[num]								Make process sleep (wait) for 'num' milleseconds.
 
 
-- - - - - Operators - - - - - 
-	
-operator			returns		desc
-$ [bool]			[num]		Conversion from boolean to number: false -> 0. true -> 1
-! [bool]			[bool]		NOT
-[bool] | [bool]		[bool]		OR
-[bool] & [bool] 	[bool]		AND
-[bool] ^ [bool]		[bool]		XOR
 
-[num] + [num]		[num]		Sum. 
-[num] - [num]		[num]		Subtraction.
-[num] * [num]		[num]		Multiplication.
-[num] / [num]		[num]		Division.
-[num] % [num]		[num]		Rest of division.
 
-[text] >< [text]	[text]		String concatenation
+commands:		
 
-[any] == [any]		[bool] 		Equal to. Values have to be of the same type.
-[any] != [any]		[bool] 		Not equal to. Values have to be of the same type.
+HALT
 
-[num] <	[num]		[bool]		Less then.
-[num] >	[num]		[bool]		Greater then.
+MOVE reg1, addr
 
-[num] <= [num]		[bool]		Less then or equal to.
-[num] >= [num]		[bool]		Greater then or equal to.
 
+ADD reg1, reg2
+
+SUBTRACT reg1, reg2
+
+JUMP
+
+JUMPIF addr
+
+SYSCALL n
